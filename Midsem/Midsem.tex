@@ -1,0 +1,61 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,commath}
+\newcommand{\lang}[1]{\mathsf{#1}}
+\newcommand{\cc}[1]{\mathsf{#1}}
+\author{Arjun Bharat,CS17B006}
+\title{CS6100: Topics in Design and Analysis of Algorithms \\ Mid-semester Examination}
+\date{29th March, 2021}
+\begin{document}
+	\maketitle
+	\begin{enumerate}
+		\item \begin{enumerate}
+			\item Consider an algorithm $A$ that solves the given instance of $\lang{TSP}$. Consider an input graph $G$. We do the following:
+			\begin{enumerate}
+				\item Assign each edge of $G$ a random weight from $\{1,2\}$. Call this resulting weighted graph $G'$.
+				\item Run the algorithm $A$ on $G'$. If the algorithm $A$ finds a least-weight Hamiltonian path in $G'$, output yes. Else, output no. 
+		\end{enumerate}  
+	The above reduction runs in $O(|E(G)|) = O({|V(G)|^2})$, where $E(G)$ denotes the edges of $G$ and $V(G)$ denotes the vertices of $G$. Clearly, this reduction is polynomial in time. We also see that $G$ has a Hamiltonian Path $\iff A$ successfully solves $G'$. Therefore, the problem of detecting the existence of a Hamiltonian path in $G$ can be solved in polynomial time using $A$ as a sub-routine.
+	
+			\item Let $\lang{TSP_{1,2}}$ be the instance of $\lang{TSP}$ on edge weights in $\{1,2\}$. Starting from $\lang{3-SAT}$, we can arrive at a polynomial time reduction to the problem of the Hamiltonian Cycle (passing via the $\lang{3-CLIQUE}$ and then the $\lang{Vertex-Cover}$) problems. The intermediate reductions are trivial with the last one being a borrowed result from Richard Karp's 1972 paper. And since the Hamiltonian Cycle problem reduces to $\lang{TSP}_{1,2}$ as shown above, this shows that $\lang{TSP}_{1,2}$ is $\cc{NP}$-hard. Therefore, $\lang{TSP}$ is strongly $\lang{NP}$-hard.
+			
+			$\lang{TSP}$ is $\lang{NP}$-hard and can be expressed as an equivalent binary programming problem using decision variables $x_{ij}$ as follows:
+			
+			Minimize $\sum_{i=1}^{n} \sum_{j=1}^{n,j \neq i} x_{ij}w_{ij}$ subject to:
+			\begin{enumerate}
+				\item $\forall i \sum_{j=1}^{n}x_{ij} = 1$
+				\item $\forall j,\sum_{i=1}^{n}x_{ij} = 1$
+				\item $\forall S \subsetneq \{1,2,\ldots,n\},|S| \geq 2, \sum_{i \in S}\sum_{j\in S\setminus\{i\}} x_{ij} \leq |S|-1$
+				\item $\forall i\forall j,x_{ij} \in \{0,1\}$ 
+			\end{enumerate}
+			 Here $x_{ij}$ denotes a movement from point $i$ to $j$, and $w_{ij}$ is the weight of the edge between them. We ensure that every vertex is entered and exited once, while ensuring that no sub-tours are present. 
+			 
+			 Thus, using theorem 4.1 from Roeglin's book, $\lang{TSP}$ cannot have a smoothed expected polynomial algorithm unless $\cc{NP} \subseteq \cc{ZPP}$. Since we have $\cc{ZPP} \subseteq \cc{NP}$, this would mean that we have $\cc{NP} = \cc{ZPP}$. Hence, we have the desired result.  
+		\end{enumerate}
+	\item The smoothed analysis of the Knapsack problem is dependent on the difference between two values lying within an interval, which by the principle of deferred decisions, depends on the value of a perturbed random variable lying in an interval of a particular width. 
+	
+	Model 1 is suitable, as it is a $\frac{1}{\epsilon}$-perturbed model. If the interval is of some length $k$,  $\alpha_i = q_i - p_i$ would also lie in an interval of the same length(the centre of the interval alone would be shifted), and the probability is bounded from above by $\frac{k}{\epsilon}$ since $\alpha_i$ is $\frac{1}{\epsilon}$-perturbed. 
+	
+	Model 2 is not suitable, since in this case, we would have $\alpha = \frac{q_i}{p_i}$ to lie inside an interval of variable length depending on $p_i$. For example, if we have $(x,x+k)$ to be our interval, then we would now have $\alpha \in (\frac{x}{p_i},\frac{x+k}{p_i})$ which is an interval of variable length dependent on $p_i$.
+ 	Thus, a useful upper bound cannot be provided on the probability in this case.  
+	\item \begin{enumerate}
+		\item Let $G$ be a set of points $x_1,x_2,..x_n \in \mathbb{R}^2$. Let $R$ be a bounded region. Then, we have,
+		
+		$\lang{KNN}(G,k,R) = \bigcup_{i=1}^{n}( \{x_i\} \times \arg\min_{\{x_{j_1},x_{j_2},\ldots,x_{j_k}\} \subseteq G\setminus\{x_i\}} \sum_{p=1}^{k} \norm{x_i - x_{j_p}})$.
+		
+		Here $\times$ denotes the cartesian product. 
+		This gives us an edge set of the graph. 
+		
+		This is not subadditive. Consider $k=1$ and four points forming a rectangle. If we create 2 partitions consisting of diagonally opposite vertices, the union of both individual functionals would have only 2 edges, while the functional of the original set has 4 edges.(We may assume that edges are undirected).
+		
+		This is not geometrically subadditive due to similar reasons, since a partition can pontentially exclude the closest neighbours of a vertex.  
+		
+		\item Let $G$ be a graph with points $x_1,x_2,\ldots,x_n$ in $\mathbb{R}^2$. Consider a rectangle $R$. The functional for $\lang{k-tour}$ is as follows:
+		
+		$\lang{k-tour}(G,R) = \min\limits_{\sigma_1,\sigma_2,\ldots, \sigma_k }\sum_{i=1}^{k}( \norm{\sigma_i(1)-\sigma_i(|\sigma_i|)}+\sum_{j=1}^{|\sigma_i|-1} \norm{\sigma_i(j) - \sigma_i(j+1)})$
+		
+		where $\sigma_1,\sigma_2,\ldots,\sigma_k$ are disjoint ordered non- empty subsets of $G$. This is not subadditive, as it is a generic case of $\lang{TSP}$ which is known not to be subadditive. 
+		
+		This is geometrically subadditive, since merging the problems solved within each region would result in a maximum further cost of $2k\cdot \lang{diam}(R)$ which is $O(\lang{diam}(R))$.
+	\end{enumerate}
+	\end{enumerate}
+\end{document}

@@ -1,0 +1,91 @@
+\documentclass[solution,12pt]{exam}
+\printanswers
+\usepackage{mathtools,amssymb}
+\newcommand{\tsp}{{\sf TSP}}
+\begin{document}
+
+\hrule
+\vspace{3mm}
+\noindent 
+{\sf IITM-CS6100 : Topics in Design and analysis of Algorithms  \hfill Given on: Mar 23}
+\vspace{3mm}\\
+\noindent 
+{\sf Problem Set \#2 \hfill Arjun Bharat, CS17B006}
+{\hfill \sf Evaluation Due on : May 30 }
+\vspace{3mm}
+\hrule
+{\small
+\begin{itemize}
+\item Turn in your solutions electronically at the moodle page. The submission should be a pdf file typeset either using     LaTeX or any other software that generates pdf. No handwritten solutions are accepted. 
+\item Collaboration is encouraged, but all write-ups must be done
+  individually and independently. For each question, you are required to mention the set of collaborators, if any.  
+ \item Submissions will be checked for {\bf plagiarism}. Each case of plagiarism will be reported to the institute disciplinary committee (DISCO). 
+\end{itemize}}
+\hrule
+\vspace{3mm}
+%\noindent {\sc Author :} Name. \\[1mm]
+%\noindent {\sc Collaborators :} \\
+%\hrule
+\begin{questions}
+\question[8]   Let $P = \{p_1,\ldots, p_n\}$ be a set of $n$ points from the unit square $[0,1]^2$. A triangulation $\tau$ of $P$ is a maximal planar graph with $P$ as the vertex set (i.e., the locations of points in $P$ should be an embedding of the graph). A minimum weight triangulation (denoted by mwt) is a triangulation with minimum total edge weight.  Let $MWT$ denote the corresponding Euclidean functional. The convex hull (denoted by $CH$) of $P$ is the smallest convex set (i.e. polygon) containing $P$. Let $|CH(P)|$ denote the number of vertices in the convex hull of $P$.  Suppose $Q_1,Q_2, Q_3$ and $Q_4$ be a partition of $[0,1]^2$ of equal sized squares. Show that
+$$ MWT(P, [0,1]^2) \le \sum_{i=1}^4 MWT(P\cap Q_i, Q_i) + \sum_{i=1}^4 O(|CH(P\cap Q_i)|).$$
+\begin{solution}
+	
+	{\bf Collaborators}: Shriram C(CS18B007). He gave me hints on how to start. \\
+	\textbf{Claim}: For a minimum weight triangulation of a set of points, the vertices on the boundary of the outer face of the maximal planar graph will constitute a minimum convex hull.
+	\\
+	\textbf{Proof}: Consider the outer face of the minimum weight triangulation. It is a polygon enclosing all points, hence, it is a valid convex hull. If there was a smaller convex hull, optimal triangulation of the same could result in a smaller weighted triangulation which would contradict the assumption we made. Thus, the outer face must be the smallest convex hull possible.
+	\\
+	Consider the minimum weight triangulations formed by $MWT(P \cap Q_i,Q_i)$. We consider the points on the outer faces of each region, and add edges only between them so as to maximally triangulate $[0,1]^2$.(the inner triangulations within each region would not be disturbed by this.) Each edge so added has a length of at most $\sqrt{2}$(which is $O(1)$), and there are $\sum\limits_{i=1}^{4} |CH(P \cap Q_i)|$ such vertices among which we try to construct a planar graph. Hence, we add at most $3\cdot \sum\limits_{i=1}^{4} |CH(P\cap Q_i)| - 6$ such edges (because the maximum number of edges in a planar graph on $n$ vertices is $3n-6$). Thus, the cost incurred to merge all sub-triangulations is $\sum\limits_{i=1}^{4}O(|CH( P\cap Q_i)|)$, and the resulting triangulation is an upper estimate of $MWT(P,[0,1]^2)$. Hence, we have $MWT(P,[0,1]^2) \leq \sum\limits_{i=1}^{4} MWT(P\cap Q_i,Q_i) + \sum\limits_{i=1}^{4}O(|CH(P \cap Q_i)|)$
+	
+\end{solution}
+\question[16] In the vehicle routing problem, we are given a set of depots $D = \{d_1,\ldots, d_k\}$ from $[0,1]^d$ and a set of $n$ points  $ P =\{p_1,\ldots, p_n\}$  (called customers) which are again  points from $[0,1]^d$. The job is to compute minimum cost $k$ vertex disjoint cycles such that every cycle has exactly one depot and every depot is in exactly one cycle.  Let $MDP$ denote the corresponding Euclidean functional. 
+\begin{parts}
+\part[7] Formally define the functional $MDP$.     Prove that $MDP$ is subadditive but not superadditive.
+\part[9] Define a canonical  boundary functional $MDP_B$ for $MDP$ and show that it is superadditive. Show that the boundary functional is also a  smooth Euclidean functional. 
+\end{parts}
+ 
+
+\begin{solution}
+{\bf Collaborators}:Naveen L S (CS18B031). He helped me with the second part by giving me an idea on how to define the functional.\\ 
+%Write solutions  afer uncommenting the lines above and below.
+(a) We assume that $n \geq 2k$, so that we get cycles having at least 3 vertices each. We define the functional as follows: $MDP(D,A) = $
+	\begin{flalign} \min\limits_{\{i_1,i_2,\ldots i_n\} \in perm(\{1,2,...n\}),l_0=0,l_j \geq 2,\sum\limits_{j=1}^{k}l_j = n} \sum\limits_{x=1}^{k} \left( dis(d_x,a_{i_{(l_x+v)}}) + dis(d_x,a_{i_{v+1}}) +  \sum\limits_{y=1}^{l_x-1}dis(a_{i_{(y+v)}},a_{i_{(y+v+1)}}) \right)
+	 \end{flalign}
+ where $dis$ is the euclidean distance, $v = \sum\limits_{m=0}^{x-1}l_m$ for each term of the summation $perm(\{1,2,\ldots n\})$ denotes all possible permutations of the set $\{1,2,\ldots n\}$, $D = \{d_1,d_2,\ldots d_k\}$ and $A = \{a_1,a_2,\ldots a_n\}$. We have created a cycle having depot $d_i$ and any $l_i$ customers. This ensures that all possible valid $k$ disjoint cycles are considered.
+ 
+ Clearly, partitioning a region $R$ into rectangular regions $R_1,R_2$ would result in a sub-solution for the individual regions, having $x$ and $y$ disjoint cycles respectively,where $x+y=k$. Retaining these solutions as such would be one estimate of the value of the least possible tour which is $MDP(D,A,R)$. Hence, $MDP(D,A,R) \leq MDP(D \cap R_1,A \cap R_1,R_1) + MDP(D \cap R_2,A \cap R_2, R_2)$. Since we are using euclidean distance, we can clearly see that $\forall y \in R^2, MDP(D+y,A+y) = MDP(D,A)$, and $\forall \alpha, MDP(\alpha D,\alpha A) = \alpha \cdot MDP(D,A)$ (euclidean distance is unaffected by a universal shift and is also linearly scaled), and hence this establishes subadditivity. 
+ 
+ Consider $[0,1]^2$ where there are 2 depots and 4 customers. Divide the square into 4 equal squares. Place one depot each in the second and fourth quadrant, and 2 customers each in the first and third quadrant. The optimal $MDP$ consists of two triangles formed on either side of the line $x = 0.5$. But the line $y = 0.5$ can result in longer sub-tours in each region that violate superadditivity. 
+ 
+ (b) Assume that $n 
+ \geq 2k$. We notice a striking similarity to the TSP, where each of the $k$ cycles must contain exactly one depot and every customer must be covered by exactly one cycle. Since it is easier to analyze $TSP_B$,we define the boundary functional as follows:
+ 
+ $MDP_B(D,A) = \min(MDP(D,A),\min\limits_{\bigcup\limits_{i=1}^{k}A_i = A,|A_i| \geq 2, A_i \cap A_j = \phi} \sum\limits_{i=1}^{k} TSP_B(A_i \cup \{d_i\}))$
+ 
+ We have considered all possible partitions of customers among the $k$ depots and use the boundary functional of the $TSP$ to compute a minimal cost tour for each of the depots. 
+ %where $choose-2k(\{1,2,\ldots n\})$ denotes an ordered choice of any $2k$ elements from $\{1,2,\ldots n\}$ (there are ${}^{n}P_{2k}$ ways to do so). Since we are interested only in the depot-customer distances, we consider the 2 outermost vertices of each cycle.
+ 
+ Since we have ensured that every cycle has at least 2 customers and one depot, the cycles are meaningful and of length at least 3. Therefore, by the superadditivity of $TSP_B$, we conclude that $MDP_B$ is superadditive. This can be broken if we consider that cycles of length 2 are allowed: For example, $d_1 = (0.25,0.55). d_2 = (0.75,0.45), a_1 = (0.75,0.55),a_2 = (0.25,0.45)$, the regions $R_1$ and $R_2$ being the two regions formed by the line $y = 0.5$. This would violate superadditivity as $MDP_B(D,A) = 0.4$ whereas $MDP_B(D \cap R_1,A \cap R_1,R_1) = MDP(D \cap R_2,A \cap R_2,R_2) = 0.6$. 
+ 
+    
+ Let us fix the depots and consider an additional set of customers $A'$. Let the incremental partitions(that is, the vertices added to each of the existing optimum partitions to create the new optimum) created by $A'$ be $A_1',A_2',\ldots A_k'$, and the original optimum partitions be $A_1,A_2,\ldots A_k$.Then,we clearly have \\$|MDP_B(D,A \cup A') - MDP_B(D,A)|  \leq \sum\limits_{i=1}^{k}|TSP_B(A_i \cup A_i') - TSP_B(A_i)| \leq c\cdot |A'|^{\frac{d-p}{d}}$ (by the smoothness of $TSP_B$, assuming a $p$ order functional). This proves the smoothness of $MDP_B$.
+\end{solution}
+
+
+\question[6] Refer to phase 3 of the algorithm for computing Hamiltonian cycle given in Page 6 of  Frieze's survey.   Show that for any tractable graph, the phase 3 of the algorithm always succeeds in computing a Hamiltonian cycle, if exists. 
+\begin{solution}
+%{\bf Collaborators}:\\ 
+%Write solutions  afer uncommenting the lines above and below.
+Assume that we can always apply either step 1 or step 2. Suppose $G$ has a Hamilton cycle and neither step 1 not step 2 can be applied further, and we have $|V(C)| < n$. Then, this implies that no two neighbours on the cycle can share a common vertex outside the cycle, and no two neighbouring vertices can have one neighbour each outside the cycle that are connected to them. 
+\end{solution}
+ 
+%\begin{solution}
+%{\bf Collaborators}:\\ 
+%Write solutions  afer uncommenting the lines above and below.
+%\end{solution}
+
+\end{questions}
+
+
+\end{document}

@@ -1,0 +1,87 @@
+\documentclass[solution,addpoints,12pt]{exam}
+\printanswers
+\usepackage{amsmath,amssymb,mathtools}
+\newcommand{\tsp}{{\sf TSP}}
+\begin{document}
+
+\hrule
+\vspace{3mm}
+\noindent 
+{\sf IITM-CS6100 : Topics in Design and analysis of Algorithms  \hfill Given on: Feb 27}
+\vspace{3mm}\\
+\noindent 
+{\sf Problem Set \#1 \hfill Arjun Bharat, CS17B006}
+{\hfill \sf Evaluation Due on : Mar 20 }
+\vspace{3mm}
+\hrule
+{\small
+\begin{itemize}
+\item Turn in your solutions electronically at the moodle page. The submission should be a pdf file typeset either using     LaTeX or any other software that generates pdf. No handwritten solutions are accepted. 
+\item Collaboration is encouraged, but all write-ups must be done
+  individually and independently. For each question, you are required to mention the set of collaborators, if any.  
+ \item Submissions will be checked for {\bf plagiarism}. Each case of plagiarism will be reported to the institute disciplinary committee (DISCO). 
+\end{itemize}}
+\hrule
+\vspace{3mm}
+%\noindent {\sc Author :} Name. \\[1mm]
+%\noindent {\sc Collaborators :} \\
+%\hrule
+\begin{questions}
+\question[10]   Suppose $p_1,\ldots, p_n \in [0,1]^2$. Let $\tsp(p_1,\ldots, p_n)$ denote the smallest cost of a traveling salesman's tour on $p_1,\ldots, p_n$ with respect to Euclidean distance.
+\begin{parts}
+\part[6] For any $n>0$, show that  $\tsp(p_1,\ldots, p_n)  \le c \sqrt{n}$ for some constant $c>0$.
+\part[4] for any $n>0$, show that there are  $n$ points $q_1,\ldots, q_n \in [0,1]^2$ such that $\tsp(q_1,\ldots, q_n)  \ge c' \sqrt{n}$ for some constant $c'>0$.
+\end{parts}
+\begin{solution}
+{\bf Collaborators}: C Shriram (CS18B007). He gave me a hint on how to start. 
+
+%Write solutions  afer uncommenting the lines above and below.
+Consider a 1 $\times$ 1 square in which all $n$ points are present. We partition the square into $\sqrt{n}$ vertical segments each of length $\frac{1}{\sqrt{n}}$. Now, we construct a tour by starting at the leftmost segment, running from top to bottom along the middle of the leftmost segment, going either left or right to meet each point and return, so that it captures each point in that segment. This path then goes right to the next segment and traverses it in a bottom-up fashion,and so on alternatingly until all points in the last segment are covered. Then, the path finally returns to the starting point. The total length of this path $l$ would be one possible estimate for the shortest path, hence $\tsp(p_1,p_2,\ldots,p_n) \leq l$. 
+
+Now, for each point $q$, a horizontal length of at most $2\cdot \frac{1}{2\sqrt{n}} = \frac{1}{\sqrt{n}}$ will be covered(since the path visits that point within the segment and returns to the middle). For all $n$ points, this gives a total of $n\cdot\frac{1}{\sqrt{n}} = \sqrt{n}$. For each segment, a total vertical distance of 1 will be covered in sweeping it from top to bottom or vice versa. This amounts to a total of $\sqrt{n}$. And finally, to return to the starting point to complete the tour, a maximum distance of $\sqrt{2}$ is covered. Hence, we have $l \leq \sqrt{n} + \sqrt{n}+\sqrt{2} \leq 2\sqrt{2n}$. Therefore for $c = 2\sqrt{2}$, we have $\tsp(p_1,p_2,\cdots,p_n) \leq c\sqrt{n}$.  
+
+Consider a particular set of points $q_1,q_2,..q_n$ which are hexagonally packed, having a total of $k$ points per layer. Each point in a layer is placed at intervals of $\delta$ distance along a straight line parallel to x-axis. The points are placed such that they form a triangular lattice of side $\delta$. This can be done if in the odd layers, the x-coordinate begins from 0, and in the even layers, it begins from $x=\frac{\delta}{2}$. 
+
+ Now, the distance between two layers is $\frac{\sqrt{3}}{2}\delta$, hence there are a total of $\lceil \frac{2}{\delta\sqrt{3}} \rceil$ layers. We have $n = k\cdot\lceil\frac{2}{\delta\sqrt{3}}\rceil$, and hence, $n\delta \geq \frac{2k}{\sqrt{3}}$.
+
+Now, every pair of points has a distance of at least $\delta$. Hence, we have  \\
+$\tsp(q_1,q_2,\cdots,q_n) \geq n\delta \geq \frac{2k}{\sqrt{3}}$. We can simply choose $k = \frac{\sqrt{3n}}{2}$, which implies $\delta = \frac{1}{\sqrt{n}}$ and this gives us $\tsp(q_1,q_2,\ldots,q_n) \geq c'\sqrt{n}$ where $c' = 1$. 
+\end{solution}
+\question[7]    This exercise to demonstrate the limitations of considering expected running time of an algorithm as a useful measure. For any $n>0$, describe  a function $f:\{0,1\}^n \to \mathbb{N}$ such that
+\begin{itemize}
+\item $\mathbb{E}[f] = \mathbb{E}_{x\in \{0,1\}^n}[f(x)] = n^c$ for some constant $c$ and
+\item ${\sf var}[f] = E[f^2] - (E[f])^2 = \Omega(2^n)$. 
+\end{itemize}
+I.e., there can be performance measures $f$ which is polynomial in expectation, but variance being exponential. Give formal justification for your answer (i.e., computation of expectation and variance for the function $f$ constructed).
+\begin{solution}
+%{\bf Collaborators}:\\ 
+%Write solutions  afer uncommenting the lines above and below.
+Consider the function $f$ defined as follows:
+
+$f(x) = \begin{cases*}
+	1 & if $x \neq 2^n-1$ \\
+	2^n & if $x = 2^n-1$
+	\end{cases*}$
+
+We have asssumed that $f(x)$ considers the value encoded by $x$ in binary. We compute the expectation and variance as follows:
+
+$\mathbb{E}[f] = \frac{1}{2^n}\sum_{i=0}^{2^n-1} f(x) = \frac{2^{n+1}-1}{2^n} = 2-\frac{1}{2^n} \in O(1)$. Hence, the expectation is polynomial in $n$.
+
+$\sf var$$[f]=\frac{1}{2^n}\sum_{i=0}^{2^n-1}{(f(x)-\mathbb{E}[f])}^2 = \frac{(2^n-1)\cdot{(1-\frac{1}{2^n})}^2 + {(2^n-2+\frac{1}{2^n})}^2}{2^n} \in \frac{\Omega(2^{2n})}{2^n} \in \Omega(2^n)$. Therefore, we have $\sf var$$[f]\in \Omega(2^n)$ and $E[f] \in O(n^c)$ for $c = 0$. 
+\end{solution}
+
+
+\question[7] Obtain profits $p_1,\ldots, p_n$ and weights $w_1,\ldots, w_n$ for the knapsack problem so that $|{\cal P}|$ is exponential in $n$ (e.g $2^{\Omega(n)}$). Justify your answer.   
+\begin{solution}
+%{\bf Collaborators}:\\ 
+%Write solutions  afer uncommenting the lines above and below.
+Consider a knapsack having $p_i,\ldots, p_n=1$ and $w_1,\ldots,w_n = 1$. We see that any heavier knapsack must have a higher profit than any lighter knapsack, and therefore, we see that no solution $x \in {\{0,i\}}^i$ can be dominated by any other candidate solution $x' \in {\{0,1\}}^i$. Therefore, $P_i$ consists of all $i$-bit binary numbers(with the remaining $n-i$ bits set to zero), thus $|\mathcal{P}_i| = 2^i-1$. Therefore, $|\mathcal{P}_n| \in 2^{\Omega(n)}$ which is exponential.  
+\end{solution}
+\question[6] Read the proof of Lemma 3.4 in the notes by Bodo Manthey (in the google drive shared with the class). The proof assumes that $a=(0,\ldots, 0)$ and $b=(\delta, 0,\ldots, 0)$. Why is this assumption without loss of generality? Justify your answer.
+\begin{solution}
+%{\bf Collaborators}:\\ 
+%Write solutions  afer uncommenting the lines above and below.
+If we consider any arbitrary $a,b$, setting $a = (0,\dots,0), b = (\delta,\ldots,0)$ amounts to shifting the origin to $a$ and then rotating the axes so that $b$ is now along $x$-axis. Even if the axes are shifted, the interval lemma still holds as $c_1$ lies within a different $\epsilon$-interval now, and rotation of the axes does not affect the Gaussian distribution, which is rotationally invariant. Hence, we may assume $a=(0,\ldots,0), b = (\delta,\ldots,0)$ without loss of generality. 
+\end{solution}
+\end{questions}
+\end{document}
